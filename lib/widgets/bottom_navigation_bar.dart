@@ -22,7 +22,6 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
       currentIndex: widget.selectedIndex,
       onTap: widget.onItemTapped,
       type: BottomNavigationBarType.fixed,
-      backgroundColor:const Color(0xFFEAEAEA), // You can customize the background color here
       selectedItemColor: Theme.of(context).primaryColor, // Color of selected item
       unselectedItemColor: Colors.grey,     // Color of unselected items
       items: const <BottomNavigationBarItem>[

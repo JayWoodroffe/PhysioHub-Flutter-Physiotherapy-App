@@ -52,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: const Color(0xFFEAEAEA),
         padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 30.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(12.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,12 +110,12 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             '17 Oct 6:41 pm',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 8.0), // Adjusted spacing
+          // SizedBox(height: 8.0), // Adjusted spacing
           Text(
             'Gemma Erskine',
             style: TextStyle(

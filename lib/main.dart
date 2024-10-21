@@ -21,9 +21,9 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor:  Color(0xFF03738C),
+          splashColor:  Colors.green.shade200,
           primarySwatch: Colors.indigo,
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.red,
             selectedItemColor: Colors.indigo.shade600,
             unselectedItemColor: Colors.grey.shade600,
           ),
