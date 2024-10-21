@@ -12,18 +12,18 @@ class CustomBottomNavBar extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CustomBottomNavBarState createState() => _CustomBottomNavBarState();
+  CustomBottomNavBarState createState() => CustomBottomNavBarState();
 }
 
-class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
+class CustomBottomNavBarState extends State<CustomBottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: widget.selectedIndex,
       onTap: widget.onItemTapped,
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.white, // You can customize the background color here
-      selectedItemColor: Colors.blueAccent, // Color of selected item
+      backgroundColor:const Color(0xFFEAEAEA), // You can customize the background color here
+      selectedItemColor: Theme.of(context).primaryColor, // Color of selected item
       unselectedItemColor: Colors.grey,     // Color of unselected items
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
