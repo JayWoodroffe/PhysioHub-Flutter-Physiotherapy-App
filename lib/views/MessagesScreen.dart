@@ -3,6 +3,8 @@ import 'package:physio_hub_flutter/widgets/bottom_navigation_bar.dart';
 import 'package:physio_hub_flutter/widgets/exercise_card.dart';
 
 import '../models/Exercise.dart';
+import '../models/Patient.dart';
+import '../widgets/contact_card.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
@@ -20,7 +22,20 @@ class _MessagesScreenState extends State<MessagesScreen> {
         (index) => Exercise(
       'Push Up',
       'Chest',
-      'https://v2.exercisedb.io/image/EsOqQ8Z50wRW7L', // Replace with actual GIF URLs
+      'https://v2.exercisedb.io/image/QDMc9VZ35SCc7T', // Replace with actual GIF URLs
+    ),
+  );
+
+  //Test contact Data
+  final List<Patient> patients = List.generate(
+    10, // Create 10 exercise cards for testing
+        (index) => Patient(
+      'abc',
+      'Gemma Erskine',
+      'https://png.pngitem.com/pimgs/s/156-1568237_transparent-contact-icon-png-icon-for-create-user.png',
+      23, 
+      '00000000000',
+      'ABC'
     ),
   );
 
@@ -47,20 +62,21 @@ class _MessagesScreenState extends State<MessagesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       bottomNavigationBar: CustomBottomNavBar(
           selectedIndex: selectedIndex,
           onItemTapped: onItemTapped
       ),
       body: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 6.0,
-            mainAxisSpacing: 6.0,
-            childAspectRatio: 0.75,
+            crossAxisCount: 1,
+            crossAxisSpacing: 2.0,
+            mainAxisSpacing: 2.0,
+            childAspectRatio: 5,
           ),
-          itemCount: exercises.length,
+          itemCount: patients.length,
           itemBuilder: (context, index){
-            return ExerciseCard(exercise: exercises[index]);
+            return ContactCard(patient: patients[index], unreadMessages: 3,);
           }),
     );
   }

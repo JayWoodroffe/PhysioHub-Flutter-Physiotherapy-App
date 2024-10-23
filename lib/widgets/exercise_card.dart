@@ -16,7 +16,8 @@ class _ExerciseCardState extends State<ExerciseCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      color: Colors.green.shade50,
+      elevation: 5,
       margin: const EdgeInsets.all(10.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
@@ -36,6 +37,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
                 return Center(child: Text('Image not available'));
               },
             ),
+            Spacer(),
             Text(
               widget.exercise.name,
               style: TextStyle(
