@@ -22,7 +22,6 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primaryColor:  Color(0xFF03738C),
           splashColor:  Colors.green.shade200,
-          primarySwatch: Colors.indigo,
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
             selectedItemColor: Colors.indigo.shade600,
             unselectedItemColor: Colors.grey.shade600,
