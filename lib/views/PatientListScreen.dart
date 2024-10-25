@@ -6,14 +6,14 @@ import '../models/Exercise.dart';
 import '../models/Patient.dart';
 import '../widgets/contact_card.dart';
 
-class MessagesScreen extends StatefulWidget {
-  const MessagesScreen({super.key});
+class PatientListScreen extends StatefulWidget {
+  const PatientListScreen({super.key});
 
   @override
-  State<MessagesScreen> createState() => _MessagesScreenState();
+  State<PatientListScreen> createState() => _PatientListScreenState();
 }
 
-class _MessagesScreenState extends State<MessagesScreen> {
+class _PatientListScreenState extends State<PatientListScreen> {
   int selectedIndex = 1; //bottom navigation index
 
 
@@ -57,6 +57,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,11 +95,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   itemBuilder: (context, index){
                     return ContactCard(patient: patients[index], unreadMessages: 3,);
                   }),
-            )
-
+            ),
           ],
         ),
       ),
+
     );
   }
 }

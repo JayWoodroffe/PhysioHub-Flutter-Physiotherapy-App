@@ -6,7 +6,8 @@ import '../widgets/bottom_navigation_bar.dart';
 // Define the Event class and event map
 class Event {
   final String title;
-  const Event(this.title);
+  final DateTime dateTime;
+  const Event(this.title, this.dateTime);
 
   @override
   String toString() => title;
@@ -44,12 +45,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   //static event data
   //TODO get events from firestore
-  final Map<DateTime, List<Event>> kEvents = {
-    DateTime(2024, 10, 21, 0, 0, 0): [Event('Event 1'), Event('Event 2')],
-    DateTime(2024, 10, 22, 0, 0, 0): [Event('Event 3')],
-    DateTime(2024, 10, 23, 0, 0, 0): [Event('Event 4')],
-    // Add more events here
-  };
+  final List<Event> kEvents = [
+    Event('Event 1', DateTime(2024, 10, 21, 10, 0)),
+    Event('Event 2', DateTime(2024, 10, 21, 14, 0)),
+    Event('Event 3', DateTime(2024, 10, 22, 12, 0)),
+    Event('Event 4', DateTime(2024, 10, 23, 16, 0)),
+  ];
 
 
   //bottom navigation
@@ -75,8 +76,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   //returning events for selected day
   List<Event> _getEventsForDay(DateTime day) {
-    final DateTime dayWithTime = DateTime(day.year, day.month, day.day, 0, 0, 0);
-    return kEvents[dayWithTime] ?? [];
+    return kEvents.where((event) {
+      return event.dateTime.year == day.year &&
+          event.dateTime.month == day.month &&
+          event.dateTime.day == day.day;
+    }).toList();
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay){
@@ -90,6 +94,138 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         _selectedEvents.value = _getEventsForDay(dayWithTime);
       }
   }
+
+  void _addNewEvent() {
+    String newEventTitle = '';
+    TimeOfDay selectedTime = TimeOfDay.now(); // Initialize selected time
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('New Appointment'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                // Event Name Input Field
+                TextField(
+                  decoration: InputDecoration(
+
+                    labelText: 'Patient Name',
+                    labelStyle: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
+                  onChanged: (value) {
+                    newEventTitle = value;
+                  },
+                ),
+                SizedBox(height: 20),
+
+                // Date Selector
+                GestureDetector(
+                  onTap: () async {
+                    // Show date picker
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: _selectedDay ?? DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2034),
+                    );
+                    if (pickedDate != null) {
+                      setState(() {
+                        _selectedDay = pickedDate;
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 15.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "${_selectedDay?.toLocal()}".split(' ')[0], // Display selected date
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+
+                // Time Selector
+                GestureDetector(
+                  onTap: () async {
+                    // Show time picker
+                    TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: selectedTime,
+
+                    );
+                    if (pickedTime != null) {
+                      setState(() {
+                        selectedTime = pickedTime;
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 15.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        selectedTime.format(context), // Display selected time
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // Add Event button
+            TextButton(
+              onPressed: () {
+                if (newEventTitle.isNotEmpty && _selectedDay != null) {
+                  final DateTime eventDate = DateTime(
+                    _selectedDay!.year,
+                    _selectedDay!.month,
+                    _selectedDay!.day,
+                    selectedTime.hour,
+                    selectedTime.minute,
+                  );
+
+                  setState(() {
+                    kEvents.add(Event(newEventTitle, eventDate));
+                    _selectedEvents.value = _getEventsForDay(eventDate);
+                  });
+
+                  Navigator.of(context).pop(); // Close the dialog
+                }
+              },
+              child: Text('Add Event', style: TextStyle(color: Theme.of(context).primaryColor),),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel', style: TextStyle(color: Theme.of(context).primaryColor),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,6 +293,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             const SizedBox(height: 10.0),
             Expanded(
               //ValueListenableBuilder allows for rebuilding of specific parts of UI
+              //in this case allows the events to be updated
                 child: ValueListenableBuilder<List<Event>>(
                   valueListenable: _selectedEvents,
                   builder: (context, value, _){
@@ -174,7 +311,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           ),
                           child: ListTile(
                             onTap: () => print('${value[index]}'),
-                            title: Text('${value[index]}'),
+                            title: Text('${value[index].title}'), // Event title
+                            subtitle: Text(
+                              '${value[index].dateTime.hour}:${value[index].dateTime.minute.toString().padLeft(2, '0')}', // Event time
+                            ),
                           ),
                         );
                       });
@@ -185,6 +325,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           ],
         ),
       ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _addNewEvent,
+          backgroundColor: Theme.of(context).primaryColor,
+          child: Icon(Icons.add),
+        )
     );
   }
 }

@@ -4,4 +4,6 @@ class Exercise{
   final String gifUrl;
   final List<String>? instructions;
   const Exercise(this.name, this.targetMuscle, this.gifUrl, [this.instructions]);
+
+
 }

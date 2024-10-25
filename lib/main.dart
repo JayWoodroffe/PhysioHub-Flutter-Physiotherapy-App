@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:physio_hub_flutter/views/MessagesScreen.dart';
+import 'package:physio_hub_flutter/views/PatientListScreen.dart';
 import 'package:physio_hub_flutter/views/SettingsScreen.dart';
 import 'package:physio_hub_flutter/views/AppointmentScreen.dart';
 import 'package:physio_hub_flutter/views/HomeScreen.dart';
 import 'package:physio_hub_flutter/views/LoginScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async{
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -22,15 +24,39 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primaryColor:  Color(0xFF03738C),
           splashColor:  Colors.green.shade200,
+          // TextField and TextFormField style settings
+          inputDecorationTheme: InputDecorationTheme(
+            // Focused border (when field is active)
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.green.shade200,  // Set focused border to primary color
+                width: 2.0,  // You can adjust the width of the border
+              ),
+              borderRadius: BorderRadius.circular(5.0),  // Optional: Add rounded corners
+            ),
+            // Default border style when not focused
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color:  Color(0xFF03738C),  // Default border when not focused
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+          ),
+          // Cursor color globally for all text input fields
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: const Color(0xFF03738C),  // Cursor color matches primary color
+            selectionColor: Colors.green.shade200,  // Text selection color matches splash
+            selectionHandleColor: Color(0xFF03738C),  // Handle color when text is selected
+          ),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            selectedItemColor: Colors.indigo.shade600,
+            selectedItemColor: Color(0xFF03738C),
             unselectedItemColor: Colors.grey.shade600,
           ),
         ),
-        initialRoute: '/home',
         routes: {
           '/home': (context) => const HomeScreen(),
-          '/messages': (context) => const MessagesScreen(),
+          '/messages': (context) => const PatientListScreen(),
           '/appointments': (context) => const AppointmentScreen(),
           '/settings': (context) => const SettingsScreen(),
         },

@@ -5,7 +5,7 @@ class Patient{
   final int age;
   final String phoneNumber;
   final String doctorId;
-  final String notes;
-  const Patient(this.id, this.name, this.photoUrl, this.age, this.phoneNumber, this.doctorId, this.notes);
+  String notes;
+  Patient(this.id, this.name, this.photoUrl, this.age, this.phoneNumber, this.doctorId, this.notes);
 
 }

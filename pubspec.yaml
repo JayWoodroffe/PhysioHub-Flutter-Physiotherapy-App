@@ -31,6 +31,10 @@ dependencies:
   table_calendar: ^3.1.2
   flutter:
     sdk: flutter
+  stream_chat_flutter: ^8.0.0
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.0
 
 
   # The following adds the Cupertino Icons font to your application.

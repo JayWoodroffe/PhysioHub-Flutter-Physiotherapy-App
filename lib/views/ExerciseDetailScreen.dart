@@ -20,51 +20,63 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
       appBar: AppBar(
         title: Text(widget.exercise.name, style: TextStyle(fontSize: 25)),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.black, width: 3), // Thin black border
+      body: SingleChildScrollView(
+        // Wrap everything in SingleChildScrollView
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Card(
+                    color: Theme.of(context).splashColor,
+                    elevation: 2,
+                    margin: const EdgeInsets.all(6.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        // Set the desired border radius
+                        child: Image.network(
+                          widget.exercise.gifUrl,
+                          height: 350,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(child: Text('Image not available'));
+                          },
+                        ),
+                      ),
+                    ),
                   ),
-                  child: Image.network(
-                    widget.exercise.gifUrl,
-                    height: 350,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(child: Text('Image not available'));
-                    },
+                  SizedBox(height: 10), // Add spacing between elements
+                  Text(
+                    '$sets sets x $reps reps',
+                    style: TextStyle(fontSize: 16),
                   ),
-                ),
-                Text(
-                  '$sets sets x $reps reps',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Instructions',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                )
-              ],
+                  SizedBox(height: 10), // Add spacing between elements
+                  Text(
+                    'Instructions',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.exercise.instructions?.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(widget.exercise.instructions![index]),
-                );
-              },
+            Column(
+              children: widget.exercise.instructions?.map((instruction) {
+                    return ListTile(
+                      title: Text(instruction),
+                    );
+                  }).toList() ??
+                  [], // Ensure instructions are mapped properly
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
