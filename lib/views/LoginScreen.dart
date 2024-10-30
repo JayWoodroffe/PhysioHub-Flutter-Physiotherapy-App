@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/DoctorProvider.dart';
 import 'HomeScreen.dart';
 import 'RegisterScreen.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +54,17 @@ class LoginScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 50,
                   child: FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (BuildContext context) {
-                            return HomeScreen();
-                          }));
+                    onPressed: () async {
+                      String email = _emailController.text.trim();
+                      String password = _passwordController.text.trim();
+                      String? result = await Provider.of<DoctorProvider>(context, listen: false).loginDoctor(email, password);
+
+                      if (result == null) {
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+                        print(result);
+                      }
                     },
                     child: Text('Login', style: TextStyle(fontSize: 18)),
                     style: ElevatedButton.styleFrom(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:physio_hub_flutter/views/RegisterPasswordScreen.dart';
 
 import 'LoginScreen.dart';
 
@@ -141,12 +142,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           FilledButton(
             onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (BuildContext context) {
-                    return LoginScreen();
-                  }));
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (BuildContext context) {
+                return RegisterPasswordScreen(
+                    name: _fullNameController.text,
+                    email: _emailController.text,
+                    phoneNumber: _phoneController.text);
+              }));
             },
-            child: Text('Register', style: TextStyle(fontSize: 18)),
+            child: Text('Next', style: TextStyle(fontSize: 18)),
             style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
                 shape: RoundedRectangleBorder(

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "953478554109",
+    "project_id": "physiohub-c4c4a",
+    "storage_bucket": "physiohub-c4c4a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953478554109:android:2768f0fb0a8376947ef994",
+        "android_client_info": {
+          "package_name": "com.PhysioHub.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBom_IzU4qDi-7eTEynIVRZRBXQn2TcQlg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

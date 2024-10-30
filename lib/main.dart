@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:physio_hub_flutter/providers/DoctorProvider.dart';
 import 'package:physio_hub_flutter/views/PatientListScreen.dart';
 import 'package:physio_hub_flutter/views/SettingsScreen.dart';
 import 'package:physio_hub_flutter/views/AppointmentScreen.dart';
 import 'package:physio_hub_flutter/views/HomeScreen.dart';
 import 'package:physio_hub_flutter/views/LoginScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
 void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DoctorProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
