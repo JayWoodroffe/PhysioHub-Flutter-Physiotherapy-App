@@ -11,6 +11,7 @@ class DoctorProvider with ChangeNotifier {
   Future<String?> loginDoctor(String email, String password) async {
     String? result = await _doctorController.loginDoctor(email, password);
     if (result == null) {
+      // If login is successful, set the current doctor and notify listeners
       _doctor = _doctorController.currentDoctor;
       notifyListeners();
     }

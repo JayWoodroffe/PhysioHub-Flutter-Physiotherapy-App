@@ -8,7 +8,6 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,13 +34,15 @@ class LoginScreen extends StatelessWidget {
                     )),
                 SizedBox(height: 40),
                 TextField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Email',
-                        labelStyle:
-                        TextStyle(color: Theme.of(context).primaryColor))),
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Email',
+                      labelStyle:
+                      TextStyle(color: Theme.of(context).primaryColor))),
                 SizedBox(height: 10),
                 TextField(
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -57,6 +58,16 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () async {
                       String email = _emailController.text.trim();
                       String password = _passwordController.text.trim();
+
+                      print (email + ' ' + password);
+
+                      if (email.isEmpty || password.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Please enter both email and password.")),
+                        );
+                        return;
+                      }
+                      //login process
                       String? result = await Provider.of<DoctorProvider>(context, listen: false).loginDoctor(email, password);
 
                       if (result == null) {

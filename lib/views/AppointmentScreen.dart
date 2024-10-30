@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../models/Doctor.dart';
+import '../providers/DoctorProvider.dart';
 import '../widgets/bottom_navigation_bar.dart';
 
 // Define the Event class and event map
@@ -95,7 +98,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       }
   }
 
-  void _addNewEvent() {
+  _addNewEvent(Doctor? doctor) {
+    print(doctor?.id);
     String newEventTitle = '';
     TimeOfDay selectedTime = TimeOfDay.now(); // Initialize selected time
 
@@ -228,6 +232,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
 
   Widget build(BuildContext context) {
+    // Access the logged-in Doctor from DoctorProvider
+    final doctorProvider = Provider.of<DoctorProvider>(context);
+    final doctor = doctorProvider.doctor;
+
     return Scaffold(
       bottomNavigationBar: CustomBottomNavBar(
           selectedIndex: selectedIndex,
@@ -326,7 +334,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         ),
       ),
         floatingActionButton: FloatingActionButton(
-          onPressed: _addNewEvent,
+          onPressed: () => _addNewEvent(doctor),
           backgroundColor: Theme.of(context).primaryColor,
           child: Icon(Icons.add),
         )

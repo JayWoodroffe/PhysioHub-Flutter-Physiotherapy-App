@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../models/Doctor.dart';
+import '../providers/DoctorProvider.dart';
 import '../widgets/bottom_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -13,6 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController notesController = TextEditingController();
   String notes = "";
   int selectedIndex = 0; //bottom navigation index
+
+
 
   void saveNotes() {
     notes = notesController.text;
@@ -44,6 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    // Access the logged-in Doctor from DoctorProvider
+    final doctorProvider = Provider.of<DoctorProvider>(context);
+    final doctor = doctorProvider.doctor;
+
     return Scaffold(
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: selectedIndex,
@@ -57,14 +68,14 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20.0),
-            _buildHeader(),
+            _buildHeader(doctor),
             const SizedBox(height: 150.0),
             const Text(
               'your next appointment',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10.0),
-            _buildAppointmentCard(),
+            _buildAppointmentCard(doctor),
           ],
         ),
       ),
@@ -72,22 +83,41 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Extracted Header Widget
-  Widget _buildHeader() {
+  Widget _buildHeader(Doctor? doctor) {
+    //current hour for time sensitive greeting
+    int hour = DateTime.now().hour;
+
+    String greeting;
+    IconData icon;
+
+    if (hour < 12){
+      greeting = 'Good Morning';
+      icon = Icons.wb_sunny;
+    }
+    else if(hour <17){
+      greeting = 'Good Afternoon';
+      icon = Icons.wb_cloudy;
+    }else{
+      greeting = 'Good Evening';
+      icon = Icons.nights_stay;
+    }
+
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children:  [
             SizedBox(height: 15),
-            Text('Good Morning', style: TextStyle(fontSize: 20)),
-            Text('Dr. Jay Woodroffe',
+            Text(greeting, style: TextStyle(fontSize: 20)),
+            Text( 'Dr. ' + doctor!.name ?? '' ,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           ],
         ),
         const Spacer(), // Takes up the remaining space between text and icon
          Icon(
-          Icons.sunny,
+          icon,
           size: 80,
           color: Theme.of(context).primaryColor,
         ),
@@ -96,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Extracted Appointment Card Widget
-  Widget _buildAppointmentCard() {
+  Widget _buildAppointmentCard(Doctor? doctor) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
