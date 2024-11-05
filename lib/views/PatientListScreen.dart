@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:physio_hub_flutter/widgets/bottom_navigation_bar.dart';
 import 'package:physio_hub_flutter/widgets/exercise_card.dart';
+import 'package:provider/provider.dart';
 
 import '../models/Exercise.dart';
 import '../models/Patient.dart';
+import '../providers/DoctorProvider.dart';
 import '../widgets/contact_card.dart';
 
 class PatientListScreen extends StatefulWidget {
@@ -16,25 +18,33 @@ class PatientListScreen extends StatefulWidget {
 class _PatientListScreenState extends State<PatientListScreen> {
   int selectedIndex = 1; //bottom navigation index
 
+  @override
+  void initState(){
+    super.initState();
 
-
-  //Test contact Data
-  final List<Patient> patients = List.generate(
-    10, // Create 10 exercise cards for testing
-        (index) => Patient(
-      'abc',
-      'Gemma Erskine',
-      'https://png.pngitem.com/pimgs/s/156-1568237_transparent-contact-icon-png-icon-for-create-user.png',
-      26,
-      '+36785673456',
-      'ABC',
-      'presents with a history of chronic lower back pain, primarily attributed \n'
-          'to prolonged sitting at work. He has undergone three months of rehabilitation \n'
-          'focused on core strengthening and posture correction, with moderate \n'
-          'improvement noted in his mobility and pain levels. Continue to monitor for any \n'
-          'recurrence of pain, and consider integrating more dynamic stretching exercises into his routine to enhance flexibility and reduce the risk of future injuries'
-    ),
-  );
+    //fetching patients when the screen loads
+    Future.microtask((){
+      Provider.of<DoctorProvider>(context, listen:false).fetchPatientsForDoctor();
+    });
+  }
+  //
+  // //Test contact Data
+  // final List<Patient> patients = List.generate(
+  //   10, // Create 10 exercise cards for testing
+  //       (index) => Patient(
+  //     'abc',
+  //     'Gemma Erskine',
+  //     'https://png.pngitem.com/pimgs/s/156-1568237_transparent-contact-icon-png-icon-for-create-user.png',
+  //     26,
+  //     '+36785673456',
+  //     'ABC',
+  //     'presents with a history of chronic lower back pain, primarily attributed \n'
+  //         'to prolonged sitting at work. He has undergone three months of rehabilitation \n'
+  //         'focused on core strengthening and posture correction, with moderate \n'
+  //         'improvement noted in his mobility and pain levels. Continue to monitor for any \n'
+  //         'recurrence of pain, and consider integrating more dynamic stretching exercises into his routine to enhance flexibility and reduce the risk of future injuries'
+  //   ),
+  // );
 
   //navigating using the bottom navigation
   void onItemTapped(int index) {
@@ -60,6 +70,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: CustomBottomNavBar(
@@ -84,17 +95,34 @@ class _PatientListScreenState extends State<PatientListScreen> {
             ),
             //list of patients
             Expanded(
-              child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    crossAxisSpacing: 2.0,
-                    mainAxisSpacing: 2.0,
-                    childAspectRatio: 4.5,
-                  ),
-                  itemCount: patients.length,
-                  itemBuilder: (context, index){
-                    return ContactCard(patient: patients[index], unreadMessages: 3,);
-                  }),
+              child: Consumer<DoctorProvider>(
+                builder: (context, doctorProvider, _) {
+                  final patients = doctorProvider.doctor?.patients ?? []; //get patients list
+
+                  //check if list is empty
+                  if (patients.isEmpty){
+                    return Center(
+                      child: Text(
+                        'No patients available',
+                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
+                    );
+                  }
+                  return  GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        crossAxisSpacing: 2.0,
+                        mainAxisSpacing: 2.0,
+                        childAspectRatio: 4.5,
+                      ),
+                      itemCount: patients.length,
+                      itemBuilder: (context, index){
+                        return ContactCard(patient: patients[index], unreadMessages: 3,);
+                      },
+                    //TODO calculate the number of unread messages
+                  );
+                },
+              ),
             ),
           ],
         ),

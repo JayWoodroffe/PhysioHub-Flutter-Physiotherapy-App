@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:physio_hub_flutter/controllers/AppointmentController.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../models/Appointment.dart';
 import '../models/Doctor.dart';
 import '../providers/DoctorProvider.dart';
 import '../widgets/bottom_navigation_bar.dart';
@@ -23,6 +25,8 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
+  final AppointmentController _appointmentController = AppointmentController();
+
   @override
   //event variables
   late final ValueNotifier<List<Event>> _selectedEvents; //changes in this list are listened to
@@ -35,6 +39,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     super.initState();
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+
+    // Fetch patients only if needed
+    Future.microtask(() {
+      Provider.of<DoctorProvider>(context, listen: false).fetchPatientsForDoctor();
+    });
   }
 
   @override
@@ -99,10 +108,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   _addNewEvent(Doctor? doctor) {
-    print(doctor?.id);
-    String newEventTitle = '';
-    TimeOfDay selectedTime = TimeOfDay.now(); // Initialize selected time
+    //ensure doctor has patients
+    if (doctor == null||doctor.patients.isEmpty) return;
 
+    print(doctor?.id);
+
+    TimeOfDay selectedTime = TimeOfDay.now(); // Initialize selected time
+    DateTime? selectedDate = _selectedDay;
+    String? selectedPatientId; //id of the patient the doctor selects
+    String? selectedPatientName = "";
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -111,15 +125,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                // Event Name Input Field
-                TextField(
+                //dropdownbutton to select a patient
+                DropdownButtonFormField<String>(
                   decoration: InputDecoration(
-
-                    labelText: 'Patient Name',
-                    labelStyle: TextStyle(color: Theme.of(context).primaryColor),
+                    labelText: 'Select Patient',
+                    labelStyle: TextStyle(color: Theme.of(context).primaryColor)
                   ),
-                  onChanged: (value) {
-                    newEventTitle = value;
+                  items: doctor.patients.map((patient){
+                    return DropdownMenuItem(value: patient.id,
+                    child: Text(patient.name),
+                    );
+                  }).toList(),
+                  onChanged: (value){
+                    selectedPatientId = value;
+                    selectedPatientName = doctor.patients.firstWhere(
+                          (patient) => patient.id == value,
+                    ).name; // Find and set the patient name based on ID
                   },
                 ),
                 SizedBox(height: 20),
@@ -198,7 +219,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             // Add Event button
             TextButton(
               onPressed: () {
-                if (newEventTitle.isNotEmpty && _selectedDay != null) {
+                if (selectedPatientId != null && selectedDate != null) {
                   final DateTime eventDate = DateTime(
                     _selectedDay!.year,
                     _selectedDay!.month,
@@ -207,10 +228,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     selectedTime.minute,
                   );
 
-                  setState(() {
-                    kEvents.add(Event(newEventTitle, eventDate));
-                    _selectedEvents.value = _getEventsForDay(eventDate);
-                  });
+                  // Create the new Appointment with the selected patientId
+                  _createNewAppointment(
+                    doctorId: doctor.id,
+                    patientId: selectedPatientId!,
+                    dateTime: eventDate,
+                    patientName: selectedPatientName!,
+                  );
 
                   Navigator.of(context).pop(); // Close the dialog
                 }
@@ -230,6 +254,29 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
 
+  void _createNewAppointment({
+    required String doctorId,
+    required String patientId,
+    required DateTime dateTime,
+    required String patientName,
+}) async {
+    final newAppointment = Appointment(
+      id:'',
+      patientId: patientId,
+      doctorId: doctorId,
+      dateTime: dateTime,
+      patientName: patientName
+    );
+
+    try{
+      await _appointmentController.createAppointment(newAppointment);
+      print("appointment added successfully");
+      SnackBar(content: Text("Appointment added"),);
+    } catch (e) {
+      print('Failed to add appointment: $e');
+      SnackBar(content: Text("Failed to add appointment"),);
+    }
+  }
 
   Widget build(BuildContext context) {
     // Access the logged-in Doctor from DoctorProvider

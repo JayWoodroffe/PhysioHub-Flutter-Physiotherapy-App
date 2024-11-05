@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:physio_hub_flutter/controllers/PatientController.dart';
 
 import '../models/Patient.dart';
 
@@ -13,6 +14,9 @@ class ContactCardDetail extends StatefulWidget {
 
 class _ContactCardDetailState extends State<ContactCardDetail> {
   late TextEditingController _notesController;
+  final PatientController _patientController = PatientController();
+
+
 
   @override
   void initState() {
@@ -26,6 +30,7 @@ class _ContactCardDetailState extends State<ContactCardDetail> {
     super.dispose();
   }
 
+
   void _editNotes() {
     showDialog(
         context: context,
@@ -34,12 +39,11 @@ class _ContactCardDetailState extends State<ContactCardDetail> {
             title: Text('Edit notes'),
             content: SingleChildScrollView(
               child: Column(children: <Widget>[
-                // Event Name Input Field
                 TextField(
                   controller: _notesController,
                   maxLines: 15,
                   decoration: InputDecoration(
-                    labelText: 'Patient Name',
+                    labelText: this.widget.patient.name,
                     labelStyle:
                         TextStyle(color: Theme.of(context).primaryColor),
                   ),
@@ -54,10 +58,28 @@ class _ContactCardDetailState extends State<ContactCardDetail> {
                 child: Text('Cancel'),
               ),
               ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    // Attempt to update the patient's notes
+                    String message = await _patientController.updatePatientNotes(
+                      widget.patient.id, // Use the patient ID
+                      _notesController.text,
+                    );
+
+                    // Update the local state
                     setState(() {
-                      widget.patient.notes = _notesController.text;
+                      widget.patient.notes = _notesController.text; // Update the patient notes
                     });
+
+                    // Show Snackbar with the result message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(message),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+
+                    // Close the dialog after updating
+                    Navigator.of(context).pop();
                   },
                   child: Text('Save'))
             ],
@@ -109,7 +131,7 @@ class _ContactCardDetailState extends State<ContactCardDetail> {
                 // Align text to the left
                 children: [
                   Text(
-                    'Age: ${this.widget.patient.age}',
+                    'Age: ${this.widget.patient.calculateAge()}',
                     // Assuming you have an age property
                     style: TextStyle(fontSize: 18),
                   ),

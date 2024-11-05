@@ -5,16 +5,23 @@ class Appointment{
   final String patientId;
   final String doctorId;
   final DateTime dateTime;
-  const Appointment(this.id, this.patientId, this.doctorId, this.dateTime);
+  final String patientName;
+  const Appointment({
+    required this.id,
+    required this.patientId,
+    required this.doctorId,
+    required this.dateTime,
+    required this.patientName});
 
   // Factory method to create an Appointment from Firestore data
-  factory Appointment.fromFirestore(DocumentSnapshot doc) {
+  factory Appointment.fromMap(DocumentSnapshot doc, String documentId) {
     final data = doc.data() as Map<String, dynamic>;
     return Appointment(
-      doc.id, // Use Firestore document ID as the Appointment ID
-      data['patientId'] ?? '', // Use null-aware operator to handle missing data
-      data['doctorId'] ?? '',
-      (data['dateTime'] as Timestamp).toDate(), // Convert Firestore Timestamp to DateTime
+      id: documentId, // Use Firestore document ID as the Appointment ID
+      patientId: data['patientId'] ?? '', // Use null-aware operator to handle missing data
+      doctorId: data['doctorId'] ?? '',
+      dateTime: (data['dateTime'] as Timestamp).toDate(), // Convert Firestore Timestamp to DateTime
+      patientName: data['patientName'] ?? ''
     );
   }
 
@@ -24,6 +31,7 @@ class Appointment{
       'patientId': patientId,
       'doctorId': doctorId,
       'dateTime': Timestamp.fromDate(dateTime), // Convert DateTime to Firestore Timestamp
+      'patientName': patientName
     };
   }
 }

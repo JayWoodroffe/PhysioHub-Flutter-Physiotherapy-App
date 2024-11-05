@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/Doctor.dart';
+import '../models/Patient.dart';
 
 class DoctorController
 {
@@ -65,4 +66,6 @@ class DoctorController
 
     // Get the logged-in doctor
     Doctor? get currentDoctor => loggedInDoctor;
+
+
 }

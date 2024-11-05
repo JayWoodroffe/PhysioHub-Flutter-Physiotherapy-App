@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/Appointment.dart';
 import '../models/Doctor.dart';
 
-class AppointmentControler
+class AppointmentController
 {
   final CollectionReference _appointmentsCollection =
   FirebaseFirestore.instance.collection('appointments');
@@ -21,5 +21,9 @@ class AppointmentControler
       // Handle general errors here
       throw e; // Re-throw the error if needed
     }
+  }
+
+  Future<List<Appointment>> getAppointments(String doctorId) async{
+
   }
 }
