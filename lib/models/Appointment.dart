@@ -13,11 +13,12 @@ class Appointment{
     required this.dateTime,
     required this.patientName});
 
+
   // Factory method to create an Appointment from Firestore data
-  factory Appointment.fromMap(DocumentSnapshot doc, String documentId) {
+  factory Appointment.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Appointment(
-      id: documentId, // Use Firestore document ID as the Appointment ID
+      id: doc.id, // Use Firestore document ID as the Appointment ID
       patientId: data['patientId'] ?? '', // Use null-aware operator to handle missing data
       doctorId: data['doctorId'] ?? '',
       dateTime: (data['dateTime'] as Timestamp).toDate(), // Convert Firestore Timestamp to DateTime

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/Appointment.dart';
 import '../models/Doctor.dart';
 import '../providers/DoctorProvider.dart';
 import '../widgets/bottom_navigation_bar.dart';
@@ -17,8 +18,16 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController notesController = TextEditingController();
   String notes = "";
   int selectedIndex = 0; //bottom navigation index
+  late Appointment nextAppointment;
 
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() {
+      Provider.of<DoctorProvider>(context, listen:false).fetchAppointmentsForDoctor();
+    });
+  }
 
   void saveNotes() {
     notes = notesController.text;

@@ -24,6 +24,21 @@ class AppointmentController
   }
 
   Future<List<Appointment>> getAppointments(String doctorId) async{
+    try{
+      QuerySnapshot querySnapshot = await _appointmentsCollection
+          .where('doctorId', isEqualTo: doctorId)
+          .get();
 
+      //convert each document to an appointment model
+      List<Appointment> appointments = querySnapshot.docs.map((doc){
+        return Appointment.fromFirestore(doc);
+      }).toList();
+      return appointments;
+
+    }
+    catch(e){
+      print("Error fetching patients: $e");
+      return [];
+    }
   }
 }

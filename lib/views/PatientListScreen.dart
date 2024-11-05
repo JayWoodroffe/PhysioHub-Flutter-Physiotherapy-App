@@ -25,26 +25,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
     //fetching patients when the screen loads
     Future.microtask((){
       Provider.of<DoctorProvider>(context, listen:false).fetchPatientsForDoctor();
+
     });
   }
-  //
-  // //Test contact Data
-  // final List<Patient> patients = List.generate(
-  //   10, // Create 10 exercise cards for testing
-  //       (index) => Patient(
-  //     'abc',
-  //     'Gemma Erskine',
-  //     'https://png.pngitem.com/pimgs/s/156-1568237_transparent-contact-icon-png-icon-for-create-user.png',
-  //     26,
-  //     '+36785673456',
-  //     'ABC',
-  //     'presents with a history of chronic lower back pain, primarily attributed \n'
-  //         'to prolonged sitting at work. He has undergone three months of rehabilitation \n'
-  //         'focused on core strengthening and posture correction, with moderate \n'
-  //         'improvement noted in his mobility and pain levels. Continue to monitor for any \n'
-  //         'recurrence of pain, and consider integrating more dynamic stretching exercises into his routine to enhance flexibility and reduce the risk of future injuries'
-  //   ),
-  // );
+
 
   //navigating using the bottom navigation
   void onItemTapped(int index) {

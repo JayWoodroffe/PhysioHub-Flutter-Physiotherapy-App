@@ -40,9 +40,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
 
-    // Fetch patients only if needed
+    // Fetch patients and appointments only if needed
     Future.microtask(() {
       Provider.of<DoctorProvider>(context, listen: false).fetchPatientsForDoctor();
+      Provider.of<DoctorProvider>(context, listen:false).fetchAppointmentsForDoctor();
+      //updating selected events after querying events for the doctor
+      _selectedEvents.value = _getEventsForDay(_selectedDay!);
     });
   }
 
@@ -52,18 +55,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     super.dispose();
   }
 
+  //index for bottom navigation
   int selectedIndex = 2;
-
-
-  //static event data
-  //TODO get events from firestore
-  final List<Event> kEvents = [
-    Event('Event 1', DateTime(2024, 10, 21, 10, 0)),
-    Event('Event 2', DateTime(2024, 10, 21, 14, 0)),
-    Event('Event 3', DateTime(2024, 10, 22, 12, 0)),
-    Event('Event 4', DateTime(2024, 10, 23, 16, 0)),
-  ];
-
 
   //bottom navigation
   void onItemTapped(int index) {
@@ -88,11 +81,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   //returning events for selected day
   List<Event> _getEventsForDay(DateTime day) {
-    return kEvents.where((event) {
-      return event.dateTime.year == day.year &&
-          event.dateTime.month == day.month &&
-          event.dateTime.day == day.day;
-    }).toList();
+    final doctor = Provider.of<DoctorProvider>(context, listen: false).doctor;
+    if(doctor == null)return [];
+
+    //create list based on doctor's appointments
+    return doctor.appointments.where((appointment){
+      return  appointment.dateTime.year == day.year &&
+              appointment.dateTime.month == day.month &&
+              appointment.dateTime.day == day.day;
+    }).map((appointment) => Event(appointment.patientName, appointment.dateTime)).toList();
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay){
@@ -269,7 +266,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     );
 
     try{
+      //create the appointment in firestore
       await _appointmentController.createAppointment(newAppointment);
+
+      //add to the logged in doctors appointments
+      final doctorProvider = Provider.of<DoctorProvider>(context, listen: false);
+      doctorProvider.doctor?.appointments.add(newAppointment);
+
       print("appointment added successfully");
       SnackBar(content: Text("Appointment added"),);
     } catch (e) {
@@ -316,7 +319,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 }
               },
               onPageChanged: (focusedDay) {
-                // No need to call `setState()` here
                 _focusedDay = focusedDay;
               },
               calendarStyle: CalendarStyle(

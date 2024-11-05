@@ -1,3 +1,4 @@
+import 'Appointment.dart';
 import 'Patient.dart';
 
 class Doctor{ final String id;
@@ -6,6 +7,7 @@ class Doctor{ final String id;
   final String phoneNumber;
   final String profilePicture;
   List <Patient> patients; //list of all the patients linked to this doctor
+  List <Appointment> appointments;
 
   Doctor({
     required this.id,
@@ -13,7 +15,8 @@ class Doctor{ final String id;
     required this.email,
     required this.phoneNumber,
     required this.profilePicture,
-    this.patients = const [], //default empty list
+    this.patients = const [], //default empty lists
+    this.appointments = const[],
   });
 
   //converting the firebase data to model
