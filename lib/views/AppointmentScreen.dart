@@ -45,13 +45,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       Provider.of<DoctorProvider>(context, listen: false).fetchPatientsForDoctor();
       Provider.of<DoctorProvider>(context, listen:false).fetchAppointmentsForDoctor();
       //updating selected events after querying events for the doctor
-      _selectedEvents.value = _getEventsForDay(_selectedDay!);
+      //_selectedEvents.value = _getEventsForDay(_selectedDay!);
+      //_selectedEvents.notifyListeners();
     });
+    Provider.of<DoctorProvider>(context, listen: false).addListener(_updateSelectedEvents);
+
+  }
+
+  void _updateSelectedEvents() {
+    // Update _selectedEvents based on the new appointments fetched
+    _selectedEvents.value = _getEventsForDay(_selectedDay!);
   }
 
   @override
   void dispose() {
     _selectedEvents.dispose();
+    Provider.of<DoctorProvider>(context, listen: false).removeListener(_updateSelectedEvents);
     super.dispose();
   }
 
@@ -101,6 +110,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           _focusedDay = focusedDay;
         });
         _selectedEvents.value = _getEventsForDay(dayWithTime);
+        _selectedEvents.notifyListeners();
       }
   }
 
@@ -272,6 +282,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       //add to the logged in doctors appointments
       final doctorProvider = Provider.of<DoctorProvider>(context, listen: false);
       doctorProvider.doctor?.appointments.add(newAppointment);
+      _selectedEvents.value = _getEventsForDay(_selectedDay!);
 
       print("appointment added successfully");
       SnackBar(content: Text("Appointment added"),);

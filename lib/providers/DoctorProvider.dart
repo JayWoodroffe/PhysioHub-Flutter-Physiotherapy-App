@@ -64,7 +64,7 @@ class DoctorProvider with ChangeNotifier {
 
   //method to get the next appointment for the doctor
   Appointment? getNextAppointment(){
-    if (_doctor == null || (_doctor?.appointments.isNotEmpty ?? true))return null;
+    if (_doctor == null || (_doctor!.appointments.isEmpty))return null;
 
     //get current date and time
     DateTime now = DateTime.now();

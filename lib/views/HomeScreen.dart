@@ -18,15 +18,18 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController notesController = TextEditingController();
   String notes = "";
   int selectedIndex = 0; //bottom navigation index
-  late Appointment nextAppointment;
+   Appointment? nextAppointment;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.microtask(() {
-      Provider.of<DoctorProvider>(context, listen:false).fetchAppointmentsForDoctor();
-    });
+    // Future.microtask(() {
+    //   Provider.of<DoctorProvider>(context, listen:false).fetchAppointmentsForDoctor();
+    //
+    //   final doctorProvider = Provider.of<DoctorProvider>(context);
+    //   nextAppointment = doctorProvider.getNextAppointment()!;
+    // });
   }
 
   void saveNotes() {
@@ -84,7 +87,22 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10.0),
-            _buildAppointmentCard(doctor),
+            FutureBuilder<void>(
+              future: Provider.of<DoctorProvider>(context, listen: false).fetchAppointmentsForDoctor(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Display a loading indicator while waiting for data
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error loading appointments');
+                } else {
+                  final doctorProvider = Provider.of<DoctorProvider>(context);
+                  final nextAppointment = doctorProvider.getNextAppointment();
+
+                  return _buildAppointmentCard(nextAppointment);
+                }
+              },
+            ),
           ],
         ),
       ),
@@ -93,6 +111,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Extracted Header Widget
   Widget _buildHeader(Doctor? doctor) {
+    final doctor = Provider.of<DoctorProvider>(context).doctor;
+
     //current hour for time sensitive greeting
     int hour = DateTime.now().hour;
 
@@ -135,7 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Extracted Appointment Card Widget
-  Widget _buildAppointmentCard(Doctor? doctor) {
+  Widget _buildAppointmentCard(Appointment? nextAppointment) {
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
@@ -143,27 +164,31 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Theme.of(context).primaryColor,
         borderRadius: BorderRadius.circular(12.0),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text(
-            '17 Oct 6:41 pm',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+      child: Center(
+        child: nextAppointment == null
+            ? Text('No upcoming appointments')
+            : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              nextAppointment.dateTime.toString(),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
-          ),
-          // SizedBox(height: 8.0), // Adjusted spacing
-          Text(
-            'Gemma Erskine',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
+            // SizedBox(height: 8.0), // Adjusted spacing
+            Text(
+              nextAppointment.patientName,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      )
     );
   }
 }
