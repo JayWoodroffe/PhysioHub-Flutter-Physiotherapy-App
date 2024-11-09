@@ -45,26 +45,26 @@ class _RegisterPasswordScreenState extends State<RegisterPasswordScreen> {
     if (_formKey.currentState!.validate()) {
 
       Doctor doctor = Doctor(
-        id: '', // Temporary, will be set by Firestore
+        id: '', // temporary, will be set by Firestore
         name: widget.name,
         email: widget.email,
         phoneNumber: widget.phoneNumber,
-        profilePicture: '', // Profile picture will be added later
+        profilePicture: '', // profile picture will be added later
       );
 
-      // Register the doctor
+      //register the doctor
       String? errorMessage = await _doctorController.registerDoctor(
           doctor,
         _passwordController.text,
       );
 
       if (errorMessage == null) {
-        // Registration was successful, navigate to the home screen
+        // registration was successful, navigate to the home screen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
         );
       } else {
-        // Show error message if registration failed
+        //show error message if registration failed
         print(errorMessage);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(errorMessage)),

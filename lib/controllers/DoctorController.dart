@@ -41,6 +41,7 @@ class DoctorController
 
     Future<String?> loginDoctor(String email, String password) async {
         try {
+            //TODO ensure that the user isnt a patient but a doctor
             // Authenticate the user
             UserCredential userCredential = await _auth.signInWithEmailAndPassword(
                 email: email,

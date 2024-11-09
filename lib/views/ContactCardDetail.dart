@@ -113,12 +113,13 @@ class _ContactCardDetailState extends State<ContactCardDetail> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                this.widget.patient.phoneNumber,
+                this.widget.patient.phoneNumber + '\t\t\t',
                 style: TextStyle(fontSize: 25),
               ),
               Icon(
                 Icons.phone,
-                size: 20,
+                size: 25,
+                color:Theme.of(context).primaryColor ,
               )
             ],
           ),

@@ -34,7 +34,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       if (_isLicensed) {
-        //TODO process registration logic here - add user
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Registration TODO!'),
           backgroundColor: Theme.of(context).splashColor,
@@ -142,13 +141,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           FilledButton(
             onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (BuildContext context) {
-                return RegisterPasswordScreen(
-                    name: _fullNameController.text,
-                    email: _emailController.text,
-                    phoneNumber: _phoneController.text);
-              }));
+              if (_formKey.currentState!.validate()) {
+                if (_isLicensed) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return RegisterPasswordScreen(
+                        name: _fullNameController.text,
+                        email: _emailController.text,
+                        phoneNumber: _phoneController.text,
+                      );
+                    },
+                  ));
+                } else {
+                  // Show error if checkbox is not checked
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                          'You must confirm you are a licensed physiotherapist.'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
             },
             child: Text('Next', style: TextStyle(fontSize: 18)),
             style: ElevatedButton.styleFrom(
