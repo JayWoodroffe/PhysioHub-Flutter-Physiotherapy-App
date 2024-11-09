@@ -37,6 +37,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
             padding: const EdgeInsets.all(12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 //display gif from api
                 Image.network(
@@ -44,11 +45,19 @@ class _ExerciseCardState extends State<ExerciseCard> {
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace){
-                    return Center(child: Text('Image not available'));
+                  errorBuilder: (context, error, stackTrace) { //error if image isnt available
+                    return Container(
+                      height: 150,
+                      color: Colors.grey[200],
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Image not available',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    );
                   },
                 ),
-                Spacer(),
+                const SizedBox(height: 8),
                 Text(
                   widget.exercise.name,
                   style: TextStyle(
@@ -56,6 +65,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
                       fontWeight: FontWeight.bold
                   ),
                 ),
+                const SizedBox(height: 4),
                 Text('$sets x $reps')
               ],
             ),

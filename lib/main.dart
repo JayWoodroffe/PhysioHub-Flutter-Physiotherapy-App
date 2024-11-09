@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:physio_hub_flutter/providers/DoctorProvider.dart';
+import 'package:physio_hub_flutter/providers/ExerciseProvider.dart';
 import 'package:physio_hub_flutter/views/PatientListScreen.dart';
 import 'package:physio_hub_flutter/views/SettingsScreen.dart';
 import 'package:physio_hub_flutter/views/AppointmentScreen.dart';
@@ -15,6 +16,7 @@ void main() async{
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => DoctorProvider()),
+        ChangeNotifierProvider<ExerciseProvider>(create: (_) => ExerciseProvider()),
       ],
       child: MyApp(),
     ),

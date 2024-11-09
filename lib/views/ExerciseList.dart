@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:physio_hub_flutter/views/AddExerciseScreen.dart';
 
 import '../models/Exercise.dart';
 import '../widgets/exercise_card.dart';
@@ -34,6 +35,17 @@ class _ExerciseListState extends State<ExerciseList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to NewScreen when the button is pressed
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddExerciseScreen()),
+          );
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(Icons.add),
+      ),
       body: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
