@@ -86,7 +86,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  ChatScreen(),
+                  //ChatScreen(),
                   ExerciseList(patientId: widget.patient.id),
                 ],
               ),

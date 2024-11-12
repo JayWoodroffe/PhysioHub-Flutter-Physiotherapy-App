@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:physio_hub_flutter/controllers/PatientController.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../models/Patient.dart';
 
 class ContactCardDetail extends StatefulWidget {
@@ -87,6 +87,18 @@ class _ContactCardDetailState extends State<ContactCardDetail> {
         });
   }
 
+  //method to launch the phone dialer with the patient's number
+  void _callPatient() async{
+    final Uri phoneUri = Uri(scheme: 'tel', path: widget.patient.phoneNumber);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Could not launch phone dialer")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,10 +128,13 @@ class _ContactCardDetailState extends State<ContactCardDetail> {
                 this.widget.patient.phoneNumber + '\t\t\t',
                 style: TextStyle(fontSize: 25),
               ),
-              Icon(
-                Icons.phone,
-                size: 25,
-                color:Theme.of(context).primaryColor ,
+              GestureDetector(
+                onTap: _callPatient,
+                child: Icon(
+                  Icons.phone,
+                  size: 25,
+                  color:Theme.of(context).primaryColor ,
+                ),
               )
             ],
           ),
