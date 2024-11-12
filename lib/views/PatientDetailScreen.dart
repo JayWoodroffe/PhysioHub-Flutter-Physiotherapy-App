@@ -70,11 +70,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               child: TabBar(
                 controller: _tabController,
                 indicatorColor: Theme.of(context).primaryColor,
-                // Change this to your desired indicator color
                 labelColor: Theme.of(context).primaryColor,
-                // Change this to your desired label color
                 unselectedLabelColor: Colors.white,
-                // Change this for unselected tab labels
                 tabs: [
                   Tab(text: 'Messages'),
                   Tab(text: 'Exercises'),
@@ -89,7 +86,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 controller: _tabController,
                 children: [
                   ChatScreen(),
-                  ExerciseList(),
+                  ExerciseList(patientId: widget.patient.id),
                 ],
               ),
             ),

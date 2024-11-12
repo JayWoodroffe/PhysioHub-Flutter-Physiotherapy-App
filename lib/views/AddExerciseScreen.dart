@@ -7,7 +7,9 @@ import '../models/Exercise.dart';
 import '../widgets/exercise_card.dart';
 
 class AddExerciseScreen extends StatefulWidget {
-  const AddExerciseScreen({super.key});
+  final String patientId;
+
+  const AddExerciseScreen({required this.patientId});
 
   @override
   State<AddExerciseScreen> createState() => _AddExerciseScreenState();
@@ -27,9 +29,9 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
           decoration: InputDecoration(
             hintText: 'Search exercises by name',
             border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.white60),
+            hintStyle: TextStyle(color: Theme.of(context).primaryColor),
           ),
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).primaryColor),
           onSubmitted: (query) {
             // Trigger a search when the user submits the text field
             exerciseProvider.searchExercisesByName(query);
@@ -39,17 +41,25 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
       body: exerciseProvider.isLoading
           ? Center(child: CircularProgressIndicator())
           : exerciseProvider.error != null
-          ? Center(child: Text('Error: ${exerciseProvider.error}'))
-          : exerciseProvider.exercises.isEmpty
-          ? Center(child: Text('No exercises found.'))
-          : ListView.builder(
-        itemCount: exerciseProvider.exercises.length,
-        itemBuilder: (context, index) {
-          return ExerciseCard(
-            exercise: exerciseProvider.exercises[index],
-          );
-        },
-      ),
+              ? Center(child: Text('Error: ${exerciseProvider.error}'))
+              : exerciseProvider.exercises.isEmpty
+                  ? Center(child: Text('No exercises found.'))
+                  : GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 2.0,
+                        mainAxisSpacing: 2.0,
+                        childAspectRatio: 0.70,
+                      ),
+                      itemCount: exerciseProvider.exercises.length,
+                      itemBuilder: (context, index) {
+                        return ExerciseCard(
+                          exercise: exerciseProvider.exercises[index],
+                          patientId: this.widget.patientId,
+                          showSetsReps: false,
+                        );
+                      },
+                    ),
     );
   }
 }

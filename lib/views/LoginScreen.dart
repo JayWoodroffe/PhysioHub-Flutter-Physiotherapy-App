@@ -13,7 +13,7 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Expanded(child: SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Container(
             color: Colors.white,
             padding: const EdgeInsets.all(15.0),
@@ -34,13 +34,13 @@ class LoginScreen extends StatelessWidget {
                     )),
                 SizedBox(height: 40),
                 TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Email',
-                      labelStyle:
-                      TextStyle(color: Theme.of(context).primaryColor))),
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Email',
+                        labelStyle:
+                        TextStyle(color: Theme.of(context).primaryColor))),
                 SizedBox(height: 10),
                 TextField(
                   controller: _passwordController,
@@ -111,7 +111,7 @@ class LoginScreen extends StatelessWidget {
               ],
             ),
           ),
-        ))
+        ),
       ),
     );
   }

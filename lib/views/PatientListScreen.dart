@@ -11,6 +11,7 @@ import '../providers/DoctorProvider.dart';
 import '../widgets/contact_card.dart';
 
 class PatientListScreen extends StatefulWidget {
+
   const PatientListScreen({super.key});
 
   @override
