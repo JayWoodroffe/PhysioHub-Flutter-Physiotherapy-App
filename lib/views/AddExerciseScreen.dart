@@ -23,6 +23,7 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
     //provider allows us to query the api
     final exerciseProvider = Provider.of<ExerciseProvider>(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: TextField(
           controller: _searchController,

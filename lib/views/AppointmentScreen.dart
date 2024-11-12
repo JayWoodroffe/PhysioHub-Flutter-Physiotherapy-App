@@ -298,6 +298,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     final doctor = doctorProvider.doctor;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       bottomNavigationBar: CustomBottomNavBar(
           selectedIndex: selectedIndex,
           onItemTapped: onItemTapped

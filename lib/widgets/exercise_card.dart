@@ -7,11 +7,24 @@ class ExerciseCard extends StatefulWidget {
   final Exercise exercise;
   final bool
   showSetsReps; //sets and reps shouldn't be shown when the user is searching for exercises
+  final bool selectionMode; // Pass if selection mode is active
+  final bool isSelected;    // Pass if this card is selected
+  final VoidCallback? onLongPress;
+  final ValueChanged<bool>? onSelect;
+
 
   final String patientId;
 
-  const ExerciseCard(
-      {required this.exercise, required this.patientId, this.showSetsReps = true});
+  const ExerciseCard({
+    required this.exercise,
+    required this.patientId,
+    this.showSetsReps = true,
+    this.selectionMode = false,
+    this.isSelected = false,
+    this.onLongPress,
+    this.onSelect,
+  });
+
 
   @override
   State<ExerciseCard> createState() => _ExerciseCardState();
@@ -20,8 +33,6 @@ class ExerciseCard extends StatefulWidget {
 class _ExerciseCardState extends State<ExerciseCard> {
   String? gifUrl;
   bool isLoadingGif = false;
-  bool selectionMode = false; //checkbox to show
-  bool isSelected = false; //checkbox must be checked
 
   @override
   void initState() {
@@ -57,28 +68,27 @@ class _ExerciseCardState extends State<ExerciseCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: (){
-        setState(() {
-          selectionMode = true;
-          isSelected = true;
-        });
-      },
+      onLongPress: widget.onLongPress, //trigger selection mode
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                ExerciseDetailScreen(
-                  exercise: this.widget.exercise,
-                  patientId: this.widget.patientId,
-                  isPreview: !widget.showSetsReps,
-                  gifUrl: gifUrl,
-                ),
-          ),
-        );
+        if(widget.selectionMode){
+          widget.onSelect!(!widget.isSelected); //toggle selection on tap in selection mode
+        } else{
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ExerciseDetailScreen(
+                    exercise: this.widget.exercise,
+                    patientId: this.widget.patientId,
+                    isPreview: !widget.showSetsReps,
+                    gifUrl: gifUrl,
+                  ),
+            ),
+          );
+        }
       },
       child: Card(
-        color: Colors.green.shade50,
+        color: widget.isSelected ? Theme.of(context).primaryColor : Colors.green.shade50,
         elevation: 5,
         margin: const EdgeInsets.all(10.0),
         shape: RoundedRectangleBorder(
@@ -131,14 +141,12 @@ class _ExerciseCardState extends State<ExerciseCard> {
                   ],
                 ],
               ),
-              if (selectionMode)
+              if (widget.selectionMode)
                 Positioned(
                   top: 0,
                   right: 0,
-                  child: Checkbox(value: isSelected, onChanged: (bool? value) {
-                    setState(() {
-                      isSelected = value ?? false;
-                    });
+                  child: Checkbox(value: widget.isSelected, onChanged: (bool? value) {
+                    widget.onSelect!(value?? false);
                   },),),
             ],
           ),

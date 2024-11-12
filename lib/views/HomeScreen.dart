@@ -5,6 +5,7 @@ import '../models/Appointment.dart';
 import '../models/Doctor.dart';
 import '../providers/DoctorProvider.dart';
 import '../widgets/bottom_navigation_bar.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -67,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final doctor = doctorProvider.doctor;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: selectedIndex,
         onItemTapped: onItemTapped,
@@ -163,14 +165,13 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Theme.of(context).primaryColor,
         borderRadius: BorderRadius.circular(12.0),
       ),
-      child: Center(
         child: nextAppointment == null
             ? Text('No upcoming appointments')
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              nextAppointment.dateTime.toString(),
+              DateFormat('d MMM, HH:mm').format(nextAppointment.dateTime),
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -187,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      )
+
     );
   }
 }

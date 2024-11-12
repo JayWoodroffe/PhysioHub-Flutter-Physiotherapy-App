@@ -32,6 +32,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
