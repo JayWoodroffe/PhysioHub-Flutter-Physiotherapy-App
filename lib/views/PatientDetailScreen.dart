@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../providers/DoctorProvider.dart';
 import 'ChatScreen.dart';
 import '../models/Patient.dart';
 import 'ContactCardDetail.dart';
 import 'ExerciseList.dart';
+import 'package:provider/provider.dart';
 
 class PatientDetailScreen extends StatefulWidget {
   final Patient patient;
@@ -31,6 +33,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final doctorProvider = Provider.of<DoctorProvider>(context);
+    final doctor = doctorProvider.doctor;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -86,7 +90,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  //ChatScreen(),
+                  ChatScreen(doctorId: doctor!.id,patientId: widget.patient.id,),
                   ExerciseList(patientId: widget.patient.id),
                 ],
               ),

@@ -5,7 +5,7 @@ class ChatMessage {
   final String receiverId;
   final String text;
   final Timestamp timestamp;
-  bool isRead;
+  bool read;
 
   ChatMessage({
     required this.senderId,
@@ -20,7 +20,7 @@ class ChatMessage {
     return ChatMessage(
       senderId: doc['senderId'],
       receiverId: doc['receiverId'],
-      text: doc['text'],
+      text: doc['message'],
       timestamp: doc['timestamp'],
       read: doc['read'],
     );
@@ -31,7 +31,7 @@ class ChatMessage {
     return {
       'senderId': senderId,
       'receiverId': receiverId,
-      'text': text,
+      'message': text,
       'timestamp': timestamp,
       'read': read,
     };
