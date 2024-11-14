@@ -46,7 +46,7 @@ class ChatMessageController {
         .map((snapshot) {
 
       return snapshot.docs.map((doc) {
-        print("Message fetched: ${doc['message']}");
+        //print("Message fetched: ${doc['message']}");
         return ChatMessage.fromFirestore(doc);
       }).toList();
     });

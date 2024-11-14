@@ -114,7 +114,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                       ),
                                     ),
                                     SizedBox(width: 5),
-                                    Icon(
+                                    if(isOutgoing)
+                                      Icon(
                                       isRead ? Icons.check_circle : Icons.check,
                                       size: 20,
                                       color: isRead ? Theme.of(context).primaryColor : Colors.grey,

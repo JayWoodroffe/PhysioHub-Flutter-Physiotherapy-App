@@ -23,14 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // Future.microtask(() {
-    //   Provider.of<DoctorProvider>(context, listen:false).fetchAppointmentsForDoctor();
-    //
-    //   final doctorProvider = Provider.of<DoctorProvider>(context);
-    //   nextAppointment = doctorProvider.getNextAppointment()!;
-    // });
   }
 
   void saveNotes() {

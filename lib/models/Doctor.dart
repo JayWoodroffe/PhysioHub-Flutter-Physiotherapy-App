@@ -5,7 +5,7 @@ class Doctor{ final String id;
   final String name;
   final String email;
   final String phoneNumber;
-  final String profilePicture;
+  String profilePicture;
   List <Patient> patients; //list of all the patients linked to this doctor
   List <Appointment> appointments;
 

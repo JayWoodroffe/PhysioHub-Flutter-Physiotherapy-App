@@ -1,10 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
+import 'package:googleapis/storage/v1.dart';
+import 'package:googleapis_auth/auth.dart';
+import 'package:googleapis_auth/auth_io.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:physio_hub_flutter/controllers/AppointmentController.dart';
 import 'package:physio_hub_flutter/controllers/PatientController.dart';
 import '../models/Appointment.dart';
 import '../models/Doctor.dart';
 import '../controllers/DoctorController.dart';
 import '../models/Patient.dart';
+import 'package:path/path.dart' as path;
 
 class DoctorProvider with ChangeNotifier {
   final DoctorController _doctorController = DoctorController();
@@ -13,6 +21,9 @@ class DoctorProvider with ChangeNotifier {
 
   Doctor? _doctor;
   Doctor? get doctor => _doctor;
+
+  final ImagePicker _picker = ImagePicker();
+  StorageApi? _storageApi = null;
 
   Future<String?> loginDoctor(String email, String password) async {
     String? result = await _doctorController.loginDoctor(email, password);
@@ -74,5 +85,48 @@ class DoctorProvider with ChangeNotifier {
       appointment.dateTime.isAfter(now)).toList();
     upcomingAppointments.sort((a, b) => a.dateTime.compareTo(b.dateTime));//sort by date
     return upcomingAppointments.isNotEmpty? upcomingAppointments.first: null;
+  }
+
+  //method to update the profile photo
+  Future<String?> updateProfilePicture() async{
+    try {
+      await _initialiseGoogleStorage();
+
+      // Select an image using ImagePicker
+      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile == null) return "No image selected.";
+
+      // Convert to File and get file name
+      File file = File(pickedFile.path);
+      String fileName = path.basename(pickedFile.path);
+
+      // Define the media upload
+      var media = Media(file.openRead(), file.lengthSync(), contentType: "image/jpeg");
+      var object = Object(name: fileName);
+
+      // Perform the upload
+      var result = await _storageApi!.objects.insert(object, 'physio_profile_pictures', uploadMedia: media);
+
+      // Construct the public URL for the uploaded image
+      String imageUrl = 'https://storage.googleapis.com/physio_profile_pictures/$fileName';
+      _doctorController.uploadProfilePicture(_doctor!.id, imageUrl);
+      return imageUrl; // Return URL to be stored in Firestore or elsewhere
+    } catch (e) {
+      print('$e');
+      return 'Error uploading image: $e';
+    }
+  }
+
+
+
+  Future <void> _initialiseGoogleStorage() async{
+    if(_storageApi != null) return; //already initialised
+
+    //load the service account credentials
+    final credentialsJson = await rootBundle.loadString('assets/credentials.json');
+    final credentials = ServiceAccountCredentials.fromJson(jsonDecode(credentialsJson));
+    final client = await clientViaServiceAccount(credentials, [StorageApi.devstorageFullControlScope]);
+
+    _storageApi = StorageApi(client);
   }
 }
