@@ -92,5 +92,19 @@ class DoctorController {
       return null;
     }
   }
+
+  //method to update the doctors name
+  Future<String?> updateName(String doctorId, String newName) async {
+    try {
+      //update the profile picture url in firestore
+      await _firestore.collection('doctors').doc(doctorId).update({
+        'name': newName,
+      });
+      return null;
+    } catch (e) {
+
+      return ('$e');
+    }
+  }
 }
 

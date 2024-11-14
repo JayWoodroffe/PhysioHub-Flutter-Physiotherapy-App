@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:physio_hub_flutter/widgets/bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +14,13 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   int selectedIndex = 3;
 
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  //bottom navigation changes
   void onItemTapped(int index) {
     setState(() {
       selectedIndex = index;
@@ -36,77 +41,148 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  //method to show the dialog to edit the doctor's name
+  void _showEditNameDialogue(BuildContext context, String currentName) {
+    final doctorProvider = Provider.of<DoctorProvider>(context, listen: false);
+    final TextEditingController nameController = TextEditingController(
+        text: currentName);
+
+    showDialog(context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Name'),
+          content: TextFormField(
+            controller: nameController,
+            decoration: InputDecoration(
+                hintText: 'Enter new name',
+                labelStyle: TextStyle(color: Theme
+                    .of(context)
+                    .primaryColor)
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator
+                    .of(context)
+                    .pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                doctorProvider.updateDoctorName(nameController.text);
+
+                setState(() {});
+                Navigator
+                    .of(context)
+                    .pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Name updated successfully'),
+                  ),
+                );
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final doctorProvider = Provider.of<DoctorProvider>(context);
+    final doctorProvider = Provider.of<DoctorProvider>(context); //listening for changes in DoctorProvider
+    var _doctor = doctorProvider.doctor;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Profile'),
-        backgroundColor: Theme.of(context).splashColor
-      ),
+          title: Text('Your profile'),
+          backgroundColor: Theme
+              .of(context)
+              .splashColor),
       bottomNavigationBar: CustomBottomNavBar(
-          selectedIndex: selectedIndex,
-          onItemTapped: onItemTapped
-      ),
+          selectedIndex: selectedIndex, onItemTapped: onItemTapped),
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.only(top: 55.0, left: 15.0, right: 15.0, bottom: 15.0),
         child: Column(
           children: [
             Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Theme.of(context).primaryColor,
-                    child: Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.white
+                child: Stack(
+                  children: [
+                    _doctor!.profilePicture != ''
+                        ? CircleAvatar(
+                      radius: 70,
+                      backgroundImage: NetworkImage(_doctor.profilePicture),
+                      backgroundColor: Colors
+                          .transparent,
                     )
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: () async {
-                        // Call the uploadProfilePicture method from DoctorProvider
-                        String? result = await context.read<DoctorProvider>().updateProfilePicture();
+                        : CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Theme
+                            .of(context)
+                            .primaryColor,
+                        child:
+                        Icon(Icons.person, size: 80, color: Colors.white)),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () async {
+                          // Call the uploadProfilePicture method from DoctorProvider
+                          String? result = await context
+                              .read<DoctorProvider>()
+                              .updateProfilePicture();
 
-                        // Check if the result is null or contains an error message
-                        if (result != null && !result.startsWith("Error")) {
-                          // Success - Show success message
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Profile picture updated successfully')),
-                          );
-                        } else {
-                          // Failure - Show failure message
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(result ?? 'Failed to update profile picture')),
-                          );
-                        }
-                      },
-                      child: CircleAvatar(
-                        radius: 15,
-                        backgroundColor: Theme.of(context).splashColor,
-                        child: Icon(
-                          Icons.camera_alt,
-                          size: 15,
+                          // Check if the result is null or contains an error message
+                          if (result != null && !result.startsWith("Error")) {
+                            // Success - Show success message
+                            setState(() {});
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content:
+                                  Text('Profile picture updated successfully')),
+                            );
+                          } else {
+                            // Failure - Show failure message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(result ??
+                                      'Failed to update profile picture')),
+                            );
+                          }
+                        },
+                        child: CircleAvatar(
+                          radius: 25,
+                          backgroundColor: Theme
+                              .of(context)
+                              .splashColor,
+                          child: Icon(
+                            Icons.camera_alt,
+                            size: 25,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            ),
+                  ],
+                )),
             SizedBox(height: 24),
             ListTile(
               leading: Icon(Icons.person, color: Colors.grey),
-              title: Text(
-                'Name',
-                style: TextStyle(color: Colors.grey, fontSize: 12,)
+              title: Text('Name',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                  )),
+              subtitle: Text(
+                _doctor.name,
+                style: TextStyle(fontSize: 16),
               ),
-              subtitle: Text('Justin Keep', style: TextStyle(fontSize: 16),),
-              trailing: Icon(Icons.edit, color: Theme.of(context).primaryColor),
+              trailing: GestureDetector(
+                  onTap: () => _showEditNameDialogue(context, _doctor.name),
+                  child: Icon(Icons.edit, color: Theme
+                      .of(context)
+                      .primaryColor)),
             ),
             Divider(),
             ListTile(
@@ -119,12 +195,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               subtitle: Text(
-                '+123 456 7890', // Replace with actual phone number
+                _doctor.phoneNumber, // Replace with actual phone number
                 style: TextStyle(fontSize: 16),
               ),
             ),
           ],
-            ),
-      ),);
+        ),
+      ),
+    );
   }
 }

@@ -110,6 +110,8 @@ class DoctorProvider with ChangeNotifier {
       // Construct the public URL for the uploaded image
       String imageUrl = 'https://storage.googleapis.com/physio_profile_pictures/$fileName';
       _doctorController.uploadProfilePicture(_doctor!.id, imageUrl);
+      _doctor!.profilePicture = imageUrl;
+      notifyListeners();
       return imageUrl; // Return URL to be stored in Firestore or elsewhere
     } catch (e) {
       print('$e');
@@ -117,7 +119,13 @@ class DoctorProvider with ChangeNotifier {
     }
   }
 
-
+  void updateDoctorName(String newName) {
+    if (doctor != null) {
+      doctor!.name = newName;
+      _doctorController.updateName(_doctor!.id, newName);
+      notifyListeners(); // Notify listeners to rebuild UI
+    }
+  }
 
   Future <void> _initialiseGoogleStorage() async{
     if(_storageApi != null) return; //already initialised

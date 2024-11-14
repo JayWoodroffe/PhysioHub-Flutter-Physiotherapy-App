@@ -87,7 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Container(
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: isOutgoing ? Color(0xFFD9DBFF) : Color(0xFF6AD1D9),
+                              color: isOutgoing ? Color(0xFFD9DBFF) : Color(0xFFD9F2C9),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Column(

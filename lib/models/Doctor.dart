@@ -2,7 +2,7 @@ import 'Appointment.dart';
 import 'Patient.dart';
 
 class Doctor{ final String id;
-  final String name;
+  late String name;
   final String email;
   final String phoneNumber;
   String profilePicture;

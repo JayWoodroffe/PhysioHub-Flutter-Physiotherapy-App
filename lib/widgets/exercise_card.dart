@@ -88,7 +88,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
         }
       },
       child: Card(
-        color: widget.isSelected ? Theme.of(context).primaryColor : Colors.green.shade50,
+        color: widget.isSelected ? Colors.red : Colors.green.shade50,
         elevation: 5,
         margin: const EdgeInsets.all(10.0),
         shape: RoundedRectangleBorder(
