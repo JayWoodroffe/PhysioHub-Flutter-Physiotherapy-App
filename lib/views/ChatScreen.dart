@@ -17,6 +17,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late ChatMessageController _messageController;
   final _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -36,9 +37,30 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_controller.text.isNotEmpty) {
       await _messageController.sendMessage(message: _controller.text);
       _controller.clear();
-      setState(() {});
+      _scrollToBottom();
     }
   }
+
+  void _scrollToBottom() {
+    // Scroll to the latest message
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _markMessagesAsRead(List<ChatMessage> unreadMessages) {
+    if (_messageController != null) {
+      final unreadMessageIds = unreadMessages.map((msg) => msg.id).toList();
+      _messageController!.markMessagesAsRead(unreadMessageIds);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +87,17 @@ class _ChatScreenState extends State<ChatScreen> {
                 }
 
                 final messages = snapshot.data!;
+                // Filter unread incoming messages and mark them as read
+                final unreadIncomingMessages = messages
+                    .where((message) => message.senderId != widget.doctorId && !message.read)
+                    .toList();
+
+                if (unreadIncomingMessages.isNotEmpty) {
+                  _markMessagesAsRead(unreadIncomingMessages);
+                }
+
                 return ListView.builder(
+                  controller: _scrollController,
                   reverse: true, //show latest messages at the bottom
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
@@ -102,9 +134,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                 ),
                                 SizedBox(height: 5),
                                 Row(
-                                  mainAxisAlignment: isOutgoing
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.start,
+                                  mainAxisAlignment:
+                                       MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       DateFormat('HH:mm').format(message.timestamp.toDate()), // Format the time

@@ -8,6 +8,7 @@ import 'package:physio_hub_flutter/views/HomeScreen.dart';
 import 'package:physio_hub_flutter/views/LoginScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,15 +67,59 @@ class _MyAppState extends State<MyApp> {
             unselectedItemColor: Colors.grey.shade600,
           ),
         ),
-        routes: {
-          '/home': (context) => const HomeScreen(),
-          '/messages': (context) => const PatientListScreen(),
-          '/appointments': (context) => const AppointmentScreen(),
-          '/settings': (context) => const SettingsScreen(),
-        },
-        home: LoginScreen()
+      initialRoute: '/', // Start with AuthCheck to verify user state
+      routes: {
+        '/': (context) => AuthCheck(), // Auth check route
+        '/login': (context) => LoginScreen(),
+        '/home': (context) => HomeScreen(),
+        '/messages': (context) => PatientListScreen(),
+        '/appointments': (context) => AppointmentScreen(),
+        '/settings': (context) => SettingsScreen(),
+      },
         // Set the login screen as the initial screen
         );
+  }
+}
+
+
+class AuthCheck extends StatefulWidget {
+  @override
+  _AuthCheckState createState() => _AuthCheckState();
+}
+
+class _AuthCheckState extends State<AuthCheck> {
+  bool _isUserChecked = false; // To track if auth state has been checked
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen for auth state changes
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+      setState(() {
+        _isUserChecked =
+        true; // Set the check flag to true once the auth state is known
+      });
+
+      if (user != null) {
+        // If user is signed in, navigate to the home screen
+        await Provider.of<DoctorProvider>(context, listen: false)
+            .loadDoctorDataFromUID(user);
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        // If user is not signed in, navigate to the login screen
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _isUserChecked
+          ? Container() // Once the auth state is checked, show an empty container
+          : Center(
+          child: CircularProgressIndicator()), // Show a loading spinner while checking auth state
+    );
   }
 }
 

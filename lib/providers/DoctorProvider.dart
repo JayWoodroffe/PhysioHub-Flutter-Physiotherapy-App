@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:googleapis/storage/v1.dart';
 import 'package:googleapis_auth/auth.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:physio_hub_flutter/controllers/AppointmentController.dart';
 import 'package:physio_hub_flutter/controllers/PatientController.dart';
+import '../controllers/ChatMessageController.dart';
 import '../models/Appointment.dart';
 import '../models/Doctor.dart';
 import '../controllers/DoctorController.dart';
@@ -18,6 +20,7 @@ class DoctorProvider with ChangeNotifier {
   final DoctorController _doctorController = DoctorController();
   final PatientController _patientController = PatientController();
   final AppointmentController _appointmentController = AppointmentController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Doctor? _doctor;
   Doctor? get doctor => _doctor;
@@ -137,4 +140,43 @@ class DoctorProvider with ChangeNotifier {
 
     _storageApi = StorageApi(client);
   }
+
+  // Method to load doctor data using the user object
+  Future<String?> loadDoctorDataFromUID(User user) async {
+    String? result = await _doctorController.loadDoctorDataById(user.uid);
+    if (result == null) {
+      // If login is successful, set the current doctor and notify listeners
+      _doctor = _doctorController.currentDoctor;
+      notifyListeners();
+    }
+    return result;
+  }
+
+  //logging out
+  Future<String?> logoutDoctor() async {
+    try {
+      await _auth.signOut();
+      return null;  // Return null if logout is successful
+    } catch (e) {
+      return 'An error occurred while logging out.';  // Return error message if something fails
+    }
+  }
+
+  // Setup real-time listeners for unread messages for each patient
+  void fetchUnreadMessageCounts() {
+    if (doctor != null && doctor!.patients.isNotEmpty) {
+      for (Patient patient in doctor!.patients) {
+        final controller = ChatMessageController(
+          doctorId: doctor!.id!,
+          patientId: patient.id,
+        );
+        // Listen to unread message count stream for each patient
+        controller.getUnreadMessageCountStream().listen((unreadCount) {
+          patient.unreadMessages = unreadCount;
+          notifyListeners(); // Update UI when count changes
+        });
+      }
+    }
+  }
+
 }

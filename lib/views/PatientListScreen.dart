@@ -27,9 +27,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
     super.initState();
 
     //fetching patients when the screen loads
-    Future.microtask(() {
-      Provider.of<DoctorProvider>(context, listen: false)
-          .fetchPatientsForDoctor();
+    Future.microtask(() async {
+      final doctorProvider = Provider.of<DoctorProvider>(context, listen: false);
+      await doctorProvider.fetchPatientsForDoctor();
+      doctorProvider.fetchUnreadMessageCounts(); // Fetch unread messages
     });
   }
 
@@ -198,7 +199,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                     itemBuilder: (context, index) {
                       return ContactCard(
                         patient: patients[index],
-                        unreadMessages: 3,
+                        unreadMessages:  patients[index].unreadMessages,
                       );
                     },
                     //TODO calculate the number of unread messages

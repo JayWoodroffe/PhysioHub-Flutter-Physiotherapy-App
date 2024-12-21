@@ -2,19 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/Doctor.dart';
-import '../models/Patient.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart' as path;
 
 class DoctorController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  //image storage
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-  final ImagePicker _picker = ImagePicker();
 
   Doctor? loggedInDoctor;
 
@@ -49,7 +40,6 @@ class DoctorController {
 
   Future<String?> loginDoctor(String email, String password) async {
     try {
-      //TODO ensure that the user isnt a patient but a doctor
       // Authenticate the user
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -104,6 +94,25 @@ class DoctorController {
     } catch (e) {
 
       return ('$e');
+    }
+  }
+
+  // Method to load doctor data using user ID (UID)
+  Future<String?> loadDoctorDataById(String userId) async {
+    try {
+      // Fetch the patient data from Firestore using the user ID
+      DocumentSnapshot doctorSnapshot = await _firestore.collection('doctors').doc(userId).get();
+
+      if (doctorSnapshot.exists) {
+        // If data exists, return a Patient object
+        loggedInDoctor =  Doctor.fromMap(doctorSnapshot.data() as Map<String, dynamic>, userId);
+        return null;
+      } else {
+        // If no data exists for the user, return null
+        return "Doctor  data not found in Firestore.";
+      }
+    } catch (e) {
+      return 'An unknown error occurred.';
     }
   }
 }

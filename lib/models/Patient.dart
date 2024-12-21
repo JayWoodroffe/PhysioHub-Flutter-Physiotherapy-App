@@ -9,6 +9,7 @@ class Patient{
   final String email;
   final String doctorId;
   String notes;
+  int unreadMessages =0;
 
   Patient(this.id, this.name, this.photoUrl, this.dob, this.phoneNumber, this.email, this.doctorId, this.notes);
 

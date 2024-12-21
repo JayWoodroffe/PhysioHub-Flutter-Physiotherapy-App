@@ -94,6 +94,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final doctorProvider = Provider.of<DoctorProvider>(context); //listening for changes in DoctorProvider
     var _doctor = doctorProvider.doctor;
+
+    // Handle log out functionality
+    Future<void> _logOut() async {
+      // Call the logout method from PatientProvider (this could trigger the logout logic)
+      String? result = await doctorProvider.logoutDoctor();
+      if (result == null) {
+        // Navigate to login screen after successful logout
+        Navigator.pushReplacementNamed(context, '/login');
+      } else {
+        // Show error message if logout failed
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(result), // Show error message
+        ));
+      }
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -104,7 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       bottomNavigationBar: CustomBottomNavBar(
           selectedIndex: selectedIndex, onItemTapped: onItemTapped),
       body: Padding(
-        padding: const EdgeInsets.only(top: 55.0, left: 15.0, right: 15.0, bottom: 15.0),
+        padding: const EdgeInsets.only(top: 55.0, left: 15.0, right: 15.0, bottom: 5.0),
         child: Column(
           children: [
             Center(
@@ -195,8 +210,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               subtitle: Text(
-                _doctor.phoneNumber, // Replace with actual phone number
+                _doctor.phoneNumber,
                 style: TextStyle(fontSize: 16),
+              ),
+            ),
+            // Log out Button
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: ElevatedButton(
+                onPressed: _logOut,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 15.0), // Padding inside the button
+                  backgroundColor: Theme.of(context).splashColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    // Optional: rounded corners
+                  ),
+                  minimumSize: Size(double.infinity, 50), // Full width of the screen
+                ),
+                child: const Text(
+                  'Log Out',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                ),
               ),
             ),
           ],
