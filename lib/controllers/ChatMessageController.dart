@@ -29,7 +29,7 @@ class ChatMessageController {
         'senderId': doctorId,
         'receiverId': patientId,
         'message': message,
-        'timestamp': FieldValue.serverTimestamp(),
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
         'read': false, // initially unread
       });
     } catch (e) {
@@ -59,19 +59,6 @@ class ChatMessageController {
     await batch.commit();
   }
 
-  // //function to get unread message count for a specific doctor-patient pair
-  // Future<int> getUnreadMessageCount() async{
-  //   try{
-  //     final snapshot = await messagesRef
-  //         .where('read', isEqualTo: false)
-  //         .where('receiverId', isEqualTo: doctorId)
-  //         .get();
-  //     return snapshot.docs.length;
-  //   }catch (e) {
-  //     print("Error fetching unread messages count: $e");
-  //     return 0;
-  //   }
-  // }
 
   // Stream to get unread message count in real-time
   Stream<int> getUnreadMessageCountStream() {

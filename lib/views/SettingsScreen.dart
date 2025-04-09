@@ -93,8 +93,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final doctorProvider = Provider.of<DoctorProvider>(context); //listening for changes in DoctorProvider
-    var _doctor = doctorProvider.doctor;
 
+    var _doctor = doctorProvider.doctor;
+    print(_doctor?.profilePicture);
     // Handle log out functionality
     Future<void> _logOut() async {
       // Call the logout method from PatientProvider (this could trigger the logout logic)

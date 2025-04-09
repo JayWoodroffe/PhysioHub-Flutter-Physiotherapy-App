@@ -108,16 +108,16 @@ class DoctorProvider with ChangeNotifier {
       var object = Object(name: fileName);
 
       // Perform the upload
-      var result = await _storageApi!.objects.insert(object, 'physio_profile_pictures', uploadMedia: media);
+      var result = await _storageApi!.objects.insert(object, 'physiohub-profile-pictures', uploadMedia: media);
 
       // Construct the public URL for the uploaded image
-      String imageUrl = 'https://storage.googleapis.com/physio_profile_pictures/$fileName';
+      String imageUrl = 'https://storage.googleapis.com/physiohub-profile-pictures/$fileName';
       _doctorController.uploadProfilePicture(_doctor!.id, imageUrl);
       _doctor!.profilePicture = imageUrl;
       notifyListeners();
       return imageUrl; // Return URL to be stored in Firestore or elsewhere
     } catch (e) {
-      print('$e');
+      print('Error: $e');
       return 'Error uploading image: $e';
     }
   }

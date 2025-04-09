@@ -19,13 +19,16 @@ class ChatMessage {
 
   // Convert Firestore document to Message object
   factory ChatMessage.fromFirestore(DocumentSnapshot doc) {
+    // Safely get the data, with a fallback to an empty map
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+
     return ChatMessage(
       id: doc.id,
-      senderId: doc['senderId'],
-      receiverId: doc['receiverId'],
-      text: doc['message'],
-      timestamp: doc['timestamp'],
-      read: doc['read'],
+      senderId: data['senderId'] ?? '',
+      receiverId: data['receiverId'] ?? '',
+      text: data['message'] ?? '',
+      timestamp: data['timestamp'] ?? Timestamp.now(),
+      read: data['read'] ?? false,
     );
   }
 

@@ -90,6 +90,7 @@ class AuthCheck extends StatefulWidget {
 class _AuthCheckState extends State<AuthCheck> {
   bool _isUserChecked = false; // To track if auth state has been checked
 
+
   @override
   void initState() {
     super.initState();
@@ -104,7 +105,16 @@ class _AuthCheckState extends State<AuthCheck> {
         // If user is signed in, navigate to the home screen
         await Provider.of<DoctorProvider>(context, listen: false)
             .loadDoctorDataFromUID(user);
-        Navigator.pushReplacementNamed(context, '/home');
+
+        // Check if doctor data is loaded
+        final doctorProvider = Provider.of<DoctorProvider>(context, listen: false);
+        if (doctorProvider.doctor != null) {
+          // Navigate to the home screen if doctor data is available
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          // If doctor data is null, navigate to the login screen
+          Navigator.pushReplacementNamed(context, '/login');
+        }
       } else {
         // If user is not signed in, navigate to the login screen
         Navigator.pushReplacementNamed(context, '/login');

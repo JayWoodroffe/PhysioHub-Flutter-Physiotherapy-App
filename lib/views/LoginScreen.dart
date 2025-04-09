@@ -8,6 +8,26 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  // Function to show alert dialog with a message
+  void _showAlertDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Login Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +94,16 @@ class LoginScreen extends StatelessWidget {
                       if (result == null) {
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+                        // Customize the error message based on the result
+                        String errorMessage;
+                        if (result.contains("Doctor data")) {
+                          errorMessage = "Physiotherapist details not found. If you're a patient, please use the PhysioLink app.";
+                        } else if (result.contains("invalid login details") || result.contains("malformed")) {
+                          errorMessage = "Incorrect login details. Please check your email and password.";
+                        } else {
+                          errorMessage = result; // Fallback to the default error message
+                        }
+                        _showAlertDialog(context, errorMessage); // Show the error message
                         print(result);
                       }
                     },

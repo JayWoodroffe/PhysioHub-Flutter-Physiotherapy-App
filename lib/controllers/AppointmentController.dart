@@ -3,10 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/Appointment.dart';
 import '../models/Doctor.dart';
 
-class AppointmentController
-{
-  final CollectionReference _appointmentsCollection =
-  FirebaseFirestore.instance.collection('appointments');
+class AppointmentController {
+  final CollectionReference _appointmentsCollection;
+
+  AppointmentController({
+    FirebaseFirestore? firestore,
+  }) : _appointmentsCollection =
+  (firestore ?? FirebaseFirestore.instance).collection('appointments');
 
   Future<String?> createAppointment(Appointment newAppointment) async {
     try {
