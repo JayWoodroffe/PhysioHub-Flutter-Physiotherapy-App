@@ -1,16 +1,29 @@
-# physio_hub_flutter
+# 🏥 PhysioHub
 
-A new Flutter project.
+**A Flutter-based mobile app designed to connect physiotherapists with their patients.**  
+Manage bookings, track recovery exercises, and streamline communication in one place.
 
-## Getting Started
+## 🚀 Features
+- Patient sign-in and therapist dashboard
+- Firebase authentication
+- Real-time updates and messaging
+- Exercise tracking and reminders
+- Appointment management
 
-This project is a starting point for a Flutter application.
+## 📸 Screenshots
+| Login Screen | Dashboard | Exercise Tracker |
+|--------------|-----------|------------------|
+| ![Login](screenshots/login.png) | ![Dashboard](screenshots/dashboard.png) | ![Tracker](screenshots/tracker.png) |
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠 Tech Stack
+- **Flutter + Dart**
+- **Firebase** (Auth, Firestore, etc.)
+- **Provider** for state management
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 📦 Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+git clone https://github.com/JayWoodroffe/physio_hub_flutter.git
+cd physio_hub_flutter
+flutter pub get
+flutter run
