@@ -11,9 +11,9 @@ Manage bookings, track recovery exercises, and streamline communication in one p
 - Appointment management
 
 ## 📸 Screenshots
-| Login Screen | Dashboard | Exercise Tracker |
+| Login Screen | Exercises | Calendar |
 |--------------|-----------|------------------|
-| ![Login](screenshots/login.png) | ![Dashboard](screenshots/dashboard.png) | ![Tracker](screenshots/tracker.png) |
+| ![Login](screenshots/login.png) | ![Exercises](screenshots/exercises.png) | ![Calendar](screenshots/calendar.png) |
 
 ## 🛠 Tech Stack
 - **Flutter + Dart**
