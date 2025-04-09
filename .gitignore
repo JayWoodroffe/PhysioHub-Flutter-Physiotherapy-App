@@ -30,6 +30,10 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+google-services.json
+credentials.json
+*.key
+*.json
 
 # Symbolication related
 app.*.symbols
