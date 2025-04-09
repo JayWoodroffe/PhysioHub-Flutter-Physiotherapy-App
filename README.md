@@ -26,7 +26,8 @@ Manage bookings, track recovery exercises, and streamline communication in one p
 git clone https://github.com/JayWoodroffe/physio_hub_flutter.git
 cd physio_hub_flutter
 flutter pub get
-flutter run ```
+flutter run
+```
 
 ## 🧠  Challenges and Learning
 - Learning Dart and gaining confidence building the UI
