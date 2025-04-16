@@ -38,3 +38,5 @@ flutter run
 - Improve the chat feature between patients and physiotherapists (allow the uploading of images and videos)
 - Push notifications to remind patients when to do their exercises
 - Deploy to Play Store
+
+📄 [View Diploma Document](docs/Diploma.pdf)
